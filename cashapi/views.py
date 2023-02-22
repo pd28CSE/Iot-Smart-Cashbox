@@ -39,6 +39,5 @@ class CustomerDataDisplay(APIView):
             
             return Response(customerserializer.data)
         
-        
         return Response(customerserializer.errors)
             

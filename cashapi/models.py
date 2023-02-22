@@ -1,12 +1,16 @@
 from django.db import models
+import uuid
+from django.utils import timezone
+from django.utils.timezone import localtime, now
+
 import random
 
 # Create your models here.
 
 
 class ShopStore(models.Model):
-    
-    productcode = models.CharField(max_length=10, default=random.randint(99999, 10000000), unique=True)
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     quantity = models.BigIntegerField(default=0)
     name = models.CharField(max_length=100, blank=False, null=False)
     sellingcost = models.FloatField(default=0.0)
@@ -14,10 +18,16 @@ class ShopStore(models.Model):
     
     
     def __str__(self)-> str:
-        return f"{self.productcode} -> {self.name}"
-     
- 
- 
+        return "{} -> {}".format(self.name, self.id)
+
+
+def getDateAndTime():
+    local_time = localtime(now())
+    time = str(local_time.time()).split('.')[0].replace(':', '-')
+    datetime = '{}--{}'.format(local_time.date(), time)
+    return datetime
+
+
 class Customer(models.Model):
  
     productcode = models.ForeignKey(ShopStore, on_delete=models.CASCADE)
