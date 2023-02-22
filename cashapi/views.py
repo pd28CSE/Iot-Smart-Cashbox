@@ -1,3 +1,4 @@
+from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -20,7 +21,7 @@ class UserDataDisplay(APIView):
 class CustomerDataDisplay(APIView):
     
     def get(self, request):
-        customers = Customer.objects.all()
+        customers = Customer.objects.filter(created_at__gte=timezone.now())
         serializer = CustomerSerializer(customers, many=True)
         return Response(serializer.data)
         
