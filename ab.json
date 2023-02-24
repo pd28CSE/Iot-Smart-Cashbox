@@ -1,0 +1,42 @@
+{
+    "id": 2,
+    "customer": {
+        "id": 1,
+        "name": "User 1"
+    },
+    "orderproduct": [
+        {
+            "id": 1,
+            "quantity": 2,
+            "price": 15.0,
+            "productcode": "e8d4774c-8b97-4ed8-8f93-b52e52a1d0a8"
+        },
+        {
+            "id": 2,
+            "quantity": 1,
+            "price": 100.0,
+            "productcode": "825c36bc-45c1-41a5-8bc4-faffeef721c9"
+        }
+    ],
+    "orderdatetime": "2023-02-24T08:55:04.482866Z",
+    "totalprice": 100.0
+}
+
+
+{
+    "id": 2,
+    "customer": {
+        "id": 1,
+        "name": "User 1"
+    },
+    "orderproduct": [
+        {
+            "id": 1,
+            "quantity": 2,
+            "price": 15.0,
+            "productcode": "e8d4774c-8b97-4ed8-8f93-b52e52a1d0a8"
+        },
+    ],
+    "orderdatetime": "2023-02-24T08:55:04.482866Z",
+    "totalprice": 100.0
+}

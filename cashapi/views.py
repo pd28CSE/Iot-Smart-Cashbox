@@ -2,8 +2,8 @@ from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from . models import ShopStore, Customer
-from . serializers import ShopStoreSerializer, CustomerSerializer
+from . models import ShopStore, Customer, CustomerOrderProduct, OrderProduct
+from . serializers import ShopStoreSerializer , CustomerSerializer, CustomerOrderProductSerializer
 
 # Create your views here.
 
@@ -21,24 +21,35 @@ class UserDataDisplay(APIView):
 class CustomerDataDisplay(APIView):
     
     def get(self, request):
-        customers = Customer.objects.filter(created_at__gte=timezone.now())
-        serializer = CustomerSerializer(customers, many=True)
+        customersProducts = CustomerOrderProduct.objects.filter(created_at__gte=timezone.now())
+        serializer = CustomerOrderProductSerializer(customersProducts, many=True)
         return Response(serializer.data)
         
         
     def post(self, request):
-        data = request.data
-        product = ShopStore.objects.get(id=data['productcode'])
+        requestProducts = request.data
+        customer = Customer.objects.create(name='user')
+        customerOrderProduct = CustomerOrderProduct.objects.create(customer=customer)
         
-        data["totalprice"] = int(data['quantity']) * product.sellingcost
+        products = []
+        totalPrice = 0
+        for product in requestProducts:
+            storeproduct = ShopStore.objects.get(id=product['productcode'])
+            subtotal = product['quantity'] * storeproduct.sellingcost
+            totalPrice += subtotal
+            orderproduct = OrderProduct.objects.create(productcode=storeproduct, quantity=product['quantity'], price=subtotal)
+            products.append(orderproduct)
+            storeproduct.currentquantity -= product['quantity']
+            storeproduct.save()
         
-        customerserializer = CustomerSerializer(data=data)
-        if customerserializer.is_valid():
-            customerserializer.save()
-            product.quantity = product.quantity - data['quantity']
-            product.save()
-            
-            return Response(customerserializer.data)
+        customerOrderProduct.totalprice = totalPrice
+        customerOrderProduct.save()
+
+        for product in products:
+            customerOrderProduct.orderproduct.add(product)
         
-        return Response(customerserializer.errors)
+        products.clear()
+        
+        return Response({'success':'All Ok'})
+        
             
